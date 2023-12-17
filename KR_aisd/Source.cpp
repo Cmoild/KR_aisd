@@ -6,10 +6,9 @@ static const double rehash_size = 0.75;
 
 template<typename T, typename Y>
 class HashTable {
-public: 
+private: 
 	class Node {
-	friend class HashTable;
-	private:
+	public:
 		T key;
 		Y data;
 		Node* next = nullptr;
@@ -26,13 +25,12 @@ private:
 	int buffer_size;
 
 	int hash_func(string s) {
-		int h = 0, n = 0;
+		long h = 0, n = 0;
 		for (int i = 0; i < s.length(); i++) {
-			h += (((long long int)s[i] - (int)'a' + 1) * (long long int)pow(23, n)) % buffer_size;
+			h += (((long long int)s[i] - (int)'a' + 1) * (long long int)pow(7, n)) % buffer_size;
 			n++;
 		}
-		h = (h * 2 + 1) % buffer_size;
-		return h;
+		return h % buffer_size;
 	}
 
 	int hash_func(int k) {
@@ -51,11 +49,16 @@ private:
 		{
 			if (arr2[i]) {
 				Add(arr2[i]->key, arr2[i]->data);
-				if (arr2[i])
+				if (arr2[i]->next) {
+					Node* cur = arr[i]->next;
+					while (cur) {
+						Add(cur->key, cur->data);
+						cur = cur->next;
+					}
+				}
+				
 			}
-				//Add(arr2[i]->value);
 		}
-		// удаление предыдущего массива
 		for (int i = 0; i < past_buffer_size; ++i)
 			if (arr2[i])
 				delete arr2[i];
@@ -78,16 +81,15 @@ public:
 	}
 
 	bool Add(T k, Y d) {
-		//resize
-		//rehash
 		if (size + 1 > (int)(rehash_size * buffer_size)) Resize();
 		int hash = hash_func(k);
 		if (arr[hash] == nullptr)
 			arr[hash] = new Node(k, d);
 		else {
 			Node* cur = arr[hash];
+			if (cur->key == k) return false;
 			while (cur->next) {
-				//одинаковые элементы - исправить, не обработано
+				if (cur->next->key == k) return false;
 				cur = cur->next;
 			}
 			cur->next = new Node(k, d);
@@ -96,24 +98,22 @@ public:
 		return true;
 	}
 
+	void test() {
+		cout << endl << "test" << endl;
+		for (int i = 0; i < buffer_size; i++) {
+			if (arr[i]) cout << arr[i]->key << hash_func(arr[i]->key) << endl;
+		}
+		cout << endl;
+	}
+
 };
 
 
 
 int main() {
-	HashTable<string, string> h;
-	h.Add("a", "some info1");
-	h.Add("k", "some info2");
-	h.Add("u", "some info3");
-	h.Add("b", "some info3");
-	h.Add("c", "some info3");
-	h.Add("d", "some info3");
-	h.Add("e", "some info3");
-	//h.Add("f", "some info3");
-	//h.Add("g", "some info3");
-	//h.Add("h", "some info3");
-	//h.Add("i", "some info3");
-	//h.Add("k", "some info3");
-	//h.Add("l", "some info3");
-	cout << h.get_size();
+	HashTable<int, string> h;
+	h.Add(1, "sodibhj");
+	h.Add(34624356, "aieufgh");
+	h.test();
+	//cout << endl << h.get_size();
 }
