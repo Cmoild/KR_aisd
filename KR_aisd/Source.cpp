@@ -6,7 +6,7 @@ static const double rehash_size = 0.75;
 
 template<typename T, typename Y>
 class HashTable {
-private: 
+public: 
 	class Node {
 	public:
 		T key;
@@ -48,15 +48,12 @@ private:
 		for (int i = 0; i < past_buffer_size; ++i)
 		{
 			if (arr2[i]) {
-				Add(arr2[i]->key, arr2[i]->data);
-				if (arr2[i]->next) {
-					Node* cur = arr[i]->next;
-					while (cur) {
-						Add(cur->key, cur->data);
-						cur = cur->next;
-					}
+				Node* cur = arr2[i];
+				while (cur) {
+					Add(cur->key, cur->data);
+					cur = cur->next;
 				}
-				
+
 			}
 		}
 		for (int i = 0; i < past_buffer_size; ++i)
@@ -98,12 +95,60 @@ public:
 		return true;
 	}
 
-	void test() {
-		cout << endl << "test" << endl;
+	Node* search(T k) {
+		int hash = hash_func(k);
+		if (arr[hash]) {
+			Node* cur = arr[hash];
+			while (cur) {
+				if (cur->key == k) return cur;
+				cur = cur->next;
+			}
+		}
+		return nullptr;
+	}
+
+	void print() {
+		cout << endl;
 		for (int i = 0; i < buffer_size; i++) {
-			if (arr[i]) cout << arr[i]->key << hash_func(arr[i]->key) << endl;
+			if (arr[i]) {
+				Node* cur = arr[i];
+				while (cur) {
+					cout << cur->key << " ";
+					cur = cur->next;
+				}
+				cout << endl;
+			}
 		}
 		cout << endl;
+	}
+
+	void del(T k) {
+		int hash = hash_func(k);
+		if (arr[hash]) {
+			Node* cur = arr[hash];
+			if (cur->key == k and cur->next == nullptr) {
+				cout << "case-1-";
+				arr[hash] = nullptr;
+				size--;
+				return;
+			}
+			if (cur->key == k and cur->next) {
+				cout << "case-2-";
+				arr[hash] = cur->next;
+				size--;
+				return;
+			}
+			while (cur) {
+				if (cur->next->key == k) {
+					cout << "case-3-";
+					cur->next = cur->next->next;
+					size--;
+					return;
+				}
+				cur = cur->next;
+			}
+		}
+		return;
 	}
 
 };
@@ -113,7 +158,21 @@ public:
 int main() {
 	HashTable<int, string> h;
 	h.Add(1, "sodibhj");
+	h.Add(2, "sodibhj");
+	h.Add(3, "sodibhj");
+	
+	h.Add(1436, "sodibhj");
 	h.Add(34624356, "aieufgh");
-	h.test();
-	//cout << endl << h.get_size();
+	h.Add(6, "edrh");
+	h.Add(9, "sodibhj");
+	h.Add(10, "sodibhj");
+	h.Add(11, "sodibhj");
+	h.Add(12, "sodibhj");
+	h.Add(13, "sodibhj");
+	h.Add(14, "sodibhj");
+	h.print();
+	cout << endl << h.get_size();
+	h.del(1436);
+	h.print();
+	cout << endl << h.get_size();
 }
