@@ -127,20 +127,17 @@ public:
 		if (arr[hash]) {
 			Node* cur = arr[hash];
 			if (cur->key == k and cur->next == nullptr) {
-				cout << "case-1-";
 				arr[hash] = nullptr;
 				size--;
 				return;
 			}
 			if (cur->key == k and cur->next) {
-				cout << "case-2-";
 				arr[hash] = cur->next;
 				size--;
 				return;
 			}
 			while (cur) {
 				if (cur->next->key == k) {
-					cout << "case-3-";
 					cur->next = cur->next->next;
 					size--;
 					return;
