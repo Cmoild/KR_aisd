@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <random>
 using namespace std;
 
 static const double rehash_size = 0.75;
@@ -153,7 +154,8 @@ public:
 
 
 int main() {
-	HashTable<int, string> h;
+	HashTable<int, int> h;
+	/*
 	h.Add(1, "sodibhj");
 	h.Add(2, "sodibhj");
 	h.Add(3, "sodibhj");
@@ -172,4 +174,20 @@ int main() {
 	h.del(1436);
 	h.print();
 	cout << endl << h.get_size();
+	*/
+	random_device dev;
+	mt19937 rng(dev());
+	int n = 50000;
+	for (int i = 0; i < n; i++) {
+		uniform_int_distribution<std::mt19937::result_type> dist6(1, 1000000);
+		int x = dist6(rng);
+		h.Add(x, x);
+	}
+	h.print();
+	//теория
+	//выбор хеш ф.
+	//коллизии
+	//тест поиска (график)
+	//ввод через консоль
+	//большие данные
 }
