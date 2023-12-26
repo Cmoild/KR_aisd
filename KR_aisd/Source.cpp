@@ -173,8 +173,10 @@ int main() {
 		key[i] = x;
 	}
 	for (int i = 0; i < n; i++) {
+		uniform_int_distribution<std::mt19937::result_type> dist6(0, n - 1);
+		int x = dist6(rng);
 		auto start = chrono::steady_clock::now();
-		h.search(key[i]);
+		h.search(key[x]);
 		auto end = chrono::steady_clock::now();
 		chrono::duration<double> tm = end - start;
 		time[i] = tm.count();
