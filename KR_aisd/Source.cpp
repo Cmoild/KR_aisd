@@ -156,58 +156,66 @@ public:
 
 int main() {
 	HashTable<int, int> h;
+
+	int choise;
 	fstream f;
-	f.open("graph.py", ios::out);
-	f << "from matplotlib import pyplot as plt" << endl << endl;
-	f << "import numpy as np" << endl;
-	random_device dev;
-	mt19937 rng(dev());
 	int n = 50000;
 	float* time = new float[n];
 	float* key = new float[n];
-	for (int i = 0; i < n; i++) {
-		uniform_int_distribution<std::mt19937::result_type> dist6(1, 1000000);
-		int x = dist6(rng);
-		h.Add(x, x);
-		key[i] = x;
+	random_device dev;
+	mt19937 rng(dev());
+	cout << "1. Graph\n2. Manual input\n";
+	cin >> choise;
+	switch (choise) {
+	case 1:
+		f.open("graph.py", ios::out);
+		f << "from matplotlib import pyplot as plt" << endl << endl;
+		f << "import numpy as np" << endl;
+		for (int i = 0; i < n; i++) {
+			uniform_int_distribution<std::mt19937::result_type> dist6(1, 1000000);
+			int x = dist6(rng);
+			h.Add(x, x);
+			key[i] = x;
+		}
+		for (int i = 0; i < n; i++) {
+			uniform_int_distribution<std::mt19937::result_type> dist6(0, n - 1);
+			int x = dist6(rng);
+			auto start = chrono::steady_clock::now();
+			h.search(key[x]);
+			auto end = chrono::steady_clock::now();
+			chrono::duration<double> tm = end - start;
+			time[i] = tm.count();
+		}
+		f << "x = [";
+		for (int i = 0; i < n; i++) {
+			if (i != n - 1) f << time[i] << ',';
+			else f << time[i] << ']';
+		}
+		f << endl << "z = [";
+		for (int i = 0; i < n; i++) {
+			if (i != n - 1) f << i + 1 << ',';
+			else f << i + 1 << ']';
+		}
+		f << "\nplt.xlabel(\"Number of test\")\nplt.ylabel(\"Time\")";
+		f << endl << "plt.scatter(z,x, c='red', s = 0.3)";
+		f << endl << "plt.show()";
+		f.close();
+		system("python graph.py");
+		break;
+	case 2:
+		cout << "Enter the number of elements: ";
+		cin >> n;
+		for (int i = 0; i < n; i++) {
+			int k;
+			int d = 0;
+			cout << "Enter key: ";
+			cin >> k;
+			cout << "Enter data: ";
+			cin >> d;
+			h.Add(k, d);
+		}
+		h.print();
+		break;
 	}
-	for (int i = 0; i < n; i++) {
-		uniform_int_distribution<std::mt19937::result_type> dist6(0, n - 1);
-		int x = dist6(rng);
-		auto start = chrono::steady_clock::now();
-		h.search(key[x]);
-		auto end = chrono::steady_clock::now();
-		chrono::duration<double> tm = end - start;
-		time[i] = tm.count();
-	}
-	f << "x = [";
-	for (int i = 0; i < n; i++) {
-		if (i != n - 1) f << time[i] << ',';
-		else f << time[i] << ']';
-	}
-	f << endl << "z = [";
-	for (int i = 0; i < n; i++) {
-		if (i != n - 1) f << i + 1 << ',';
-		else f << i + 1 << ']';
-	}
-	//f << "\ntime = (sum(x)/len(x))";
-	f << "\nplt.xlabel(\"Number of test\")\nplt.ylabel(\"Time\")";
-	f << endl << "plt.scatter(z,x, c='red', s = 0.3)";
-	/*
-	cout << "Enter the number of elements: ";
-	cin >> n;
-	for (int i = 0; i < n; i++) {
-		string k;
-		int d = 0;
-		cout << "Enter key: ";
-		cin >> k;
-		cout << "Enter data: ";
-		cin >> d;
-		h.Add(k, d);
-	}
-	h.print();
-	*/
-	f << endl << "plt.show()";
-	f.close();
-	system("python graph.py");
+	
 }
