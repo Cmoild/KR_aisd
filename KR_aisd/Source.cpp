@@ -5,8 +5,6 @@
 #include <chrono>
 using namespace std;
 
-static const double rehash_size = 0.75;
-
 template<typename T, typename Y>
 class HashTable {
 public: 
@@ -23,6 +21,7 @@ public:
 	};
 private:
 	static const int default_size = 10;
+	static constexpr double rehash_size = 0.75;
 	Node** arr;
 	int size;
 	int buffer_size;
